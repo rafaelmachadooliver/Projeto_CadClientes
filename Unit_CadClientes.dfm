@@ -793,7 +793,6 @@ object FrmCadClientes: TFrmCadClientes
           Width = 478
           Height = 21
           TabOrder = 6
-          OnKeyPress = EdtConsultaCepKeyPress
         end
         object edtJSON: TMemo
           Left = 239

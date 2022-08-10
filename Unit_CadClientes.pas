@@ -1,5 +1,11 @@
 unit Unit_CadClientes;
 
+(*******************************************************
+ * Programador Rafael Machado de Oliveira              *
+ * Data: 09/08/2022                                    *
+ *******************************************************)
+
+
 interface
 
 uses
@@ -68,7 +74,6 @@ type
     procedure BtnConsultaCepClick(Sender: TObject);
     procedure BtnEmailClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure EdtConsultaCepKeyPress(Sender: TObject; var Key: Char);
 
   private
     { Private declarations }
@@ -113,7 +118,6 @@ begin
           edt_Cidade.Text := CEP.Localidade;
           Edt_Estado.Text := CEP.UF;
           EdtNumero.Text := CEP.IBGE;
-          //edtGIA.Text := CEP.GIA;
         finally
           CEP.Free;
         end;
@@ -178,13 +182,6 @@ begin
    else
      Application.MessageBox('Não há clientes cadastrados.',
        'Cadastro de Clientes', MB_OK + MB_ICONWARNING + MB_DEFBUTTON2);
-end;
-
-procedure TFrmCadClientes.EdtConsultaCepKeyPress(Sender: TObject;
-  var Key: Char);
-begin
-   //if ((key in ['0'..'9'] = false) and (word(key) <> vk_back)) then
-   //  key := #0;
 end;
 
 procedure TFrmCadClientes.FormClose(Sender: TObject; var Action: TCloseAction);
