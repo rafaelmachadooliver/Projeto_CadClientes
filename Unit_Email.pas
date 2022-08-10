@@ -1,0 +1,189 @@
+unit Unit_Email;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls,
+  Vcl.Buttons, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdMessage,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdAttachmentFile,
+  IdExplicitTLSClientServerBase, IdMessageClient, IdSMTPBase, IdSMTP, IdServerIOHandler,
+  IdSSL, IdSSLOpenSSL;
+
+type
+  TFrmEmail = class(TForm)
+    PnGeral: TPanel;
+    PcEmail: TPageControl;
+    tabConfig: TTabSheet;
+    TabEmail: TTabSheet;
+    RdServidor: TRadioGroup;
+    GrpConfig: TGroupBox;
+    lblHost: TLabel;
+    lblPorta: TLabel;
+    EdtHost: TEdit;
+    EdtPorta: TEdit;
+    GrpEmail: TGroupBox;
+    lblEmail: TLabel;
+    Label1: TLabel;
+    EdtLogin: TEdit;
+    edtEmail: TEdit;
+    lblAssunto: TLabel;
+    EdtAssunto: TEdit;
+    BtnEmail: TBitBtn;
+    Smtp: TIdSMTP;
+    Email: TIdMessage;
+    Socket: TIdIOHandlerStack;
+    Senha: TLabel;
+    edtSenha: TEdit;
+    Seguranca: TIdSSLIOHandlerSocketOpenSSL;
+    lblEnviar: TLabel;
+    lblInfo: TLabel;
+    procedure RdServidorClick(Sender: TObject);
+    procedure BtnEmailClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmEmail: TFrmEmail;
+
+implementation
+
+{$R *.dfm}
+
+procedure TFrmEmail.BtnEmailClick(Sender: TObject);
+var
+  SSLHandler: TIdSSLIOHandlerSocketOpenSSL;
+begin
+
+   lblEnviar.Visible:=True;
+   lblEnviar.Refresh;
+
+   if (edtEmail.Text = '') or ( EdtAssunto.Text='') then
+     begin
+         Application.MessageBox('Os Campos para envio do e-mail estão vazios.',
+           'Cadastro de Clientes', MB_OK + MB_ICONWARNING + MB_DEFBUTTON2);
+         edtEmail.SetFocus;
+         Exit;
+     end;
+
+   if (( EdtLogin.Text = '') or (edtSenha.Text='') or (EdtHost.Text ='') or (EdtPorta.Text =''))then
+     begin
+        Application.MessageBox('Verifique a configuração.',
+        'Cadastro de Clientes', MB_OK + MB_ICONWARNING + MB_DEFBUTTON2);
+        Exit;
+     end;
+
+   SSLHandler:= TIdSSLIOHandlerSocketOpenSSL.Create(Self);
+
+   case RdServidor.ItemIndex of
+    0: //Gmail
+     begin
+        SSLHandler.SSLOptions.Method:=sslvTLSv1; //sslvSSLv23;
+        SSLHandler.SSLOptions.Mode  := sslmUnassigned; //sslmClient;
+        SSLHandler.PassThrough := true;
+        Smtp.IOHandler:= SSLHandler;
+     end;
+
+     1: //Hotmail
+      begin
+        SSLHandler.SSLOptions.Method:= sslvSSLv23;
+        SSLHandler.SSLOptions.Mode  := sslmClient;
+      end;
+   end;
+
+   try
+     Email.From.Address:= EdtLogin.Text;
+     Email.Subject:= EdtAssunto.Text;
+     Email.Recipients.EMailAddresses:=edtEmail.Text;
+     Email.Priority:= mpNormal;
+
+     //Anexo do arquivo.
+     if FileExists('Registro.xml') then
+       TIdAttachmentFile.Create(Email.MessageParts, 'Registro.xml');
+
+     Smtp.Username:= edtLogin.Text;
+     Smtp.Password:= EdtSenha.Text;
+     Smtp.Host:= edtHost.Text;
+     Smtp.Port:= StrToInt(EdtPorta.Text);
+     Smtp.AuthType:= satDefault;
+     SMTP.IOHandler:= SSLHandler;
+     SMTP.UseTLS := utUseExplicitTLS;
+     Smtp.ConnectTimeout:=3000;
+
+     //Tenta a conexão e se conseguir envia o email.
+     try
+       Smtp.Connect;
+       SMTP.Authenticate;
+     except on E:Exception do
+       begin
+           ShowMessage('Erro ao tentar conectar: ' + E.Message);
+       end;
+     end;
+
+     Try
+      Smtp.Send(Email);
+
+     except on E:exception do
+     begin
+        ShowMessage('Erro ao tentar enviar: ' + E.Message);
+        lblEnviar.Visible:=False;
+        Exit;
+     end;
+
+     End;
+
+   finally
+     Smtp.Disconnect;
+     Email.Recipients.Clear;
+     Email.ClearBody;
+   end;
+
+   lblEnviar.Visible:=False;
+
+    Application.MessageBox('E-mail enviado com sucesso.',
+      'Cadastro de Clientes', MB_OK + MB_ICONINFORMATION + MB_DEFBUTTON2);
+
+end;
+
+procedure TFrmEmail.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+   If Key = #13 then //Se o comando for igual a enter
+     Begin
+        Key := #0;
+        Perform (wm_nextdlgctl, 0, 0); //Para pular de campo em campo
+     End;
+end;
+
+procedure TFrmEmail.FormShow(Sender: TObject);
+begin
+   RdServidor.OnClick(Self);
+end;
+
+procedure TFrmEmail.RdServidorClick(Sender: TObject);
+begin
+   case RdServidor.ItemIndex of
+
+     0: //Hotmail
+      begin
+        EdtHost.Text:= 'smtp-mail.outlook.com';
+        EdtPorta.Text:= '587';
+        EdtLogin.SetFocus;
+      end;
+
+     1:
+      begin
+        EdtHost.Text:= '';
+        EdtPorta.Text:= '';
+        EdtLogin.SetFocus;
+      end;
+
+   end;
+
+end;
+
+end.

@@ -1,0 +1,16 @@
+program Cadastro_Clientes;
+
+uses
+  Vcl.Forms,
+  Unit_CadClientes in 'Unit_CadClientes.pas' {FrmCadClientes},
+  Unit_DM in 'Unit_DM.pas' {DM: TDataModule};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFrmCadClientes, FrmCadClientes);
+  Application.CreateForm(TDM, DM);
+  Application.Run;
+end.

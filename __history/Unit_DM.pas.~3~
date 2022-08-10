@@ -1,0 +1,39 @@
+unit Unit_DM;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, Datasnap.DBClient;
+
+type
+  TDM = class(TDataModule)
+    CadClientes: TClientDataSet;
+    CadClientesNome: TStringField;
+    CadClientesIdentidade: TStringField;
+    CadClientesCpf: TStringField;
+    CadClientesTelefone: TStringField;
+    CadClientesEmail: TStringField;
+    CadClientesCep: TStringField;
+    CadClientesLogradouro: TStringField;
+    CadClientesNumero: TIntegerField;
+    CadClientesComplemento: TStringField;
+    CadClientesBairro: TStringField;
+    CadClientesCidade: TStringField;
+    CadClientesEstado: TStringField;
+    CadClientesPais: TStringField;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DM: TDM;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

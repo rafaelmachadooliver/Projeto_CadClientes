@@ -1,0 +1,49 @@
+object DM: TDM
+  OldCreateOrder = False
+  Height = 234
+  Width = 329
+  object CadClientes: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 32
+    Top = 24
+    object CadClientesNome: TStringField
+      FieldName = 'Nome'
+      Size = 150
+    end
+    object CadClientesIdentidade: TStringField
+      FieldName = 'Identidade'
+      Size = 15
+    end
+    object CadClientesCpf: TStringField
+      FieldName = 'Cpf'
+    end
+    object CadClientesTelefone: TStringField
+      FieldName = 'Telefone'
+      Size = 15
+    end
+    object CadClientesEmail: TStringField
+      FieldName = 'Email'
+      Size = 40
+    end
+    object CadClientesCep: TStringField
+      FieldName = 'Cep'
+      Size = 9
+    end
+    object CadClientesLogradouro: TStringField
+      FieldName = 'Logradouro'
+      Size = 150
+    end
+    object CadClientesNumero: TIntegerField
+      FieldName = 'Numero'
+    end
+    object CadClientesComplemento: TStringField
+      FieldName = 'Complemento'
+      Size = 200
+    end
+    object CadClientesBairro: TStringField
+      FieldName = 'Bairro'
+      Size = 80
+    end
+  end
+end

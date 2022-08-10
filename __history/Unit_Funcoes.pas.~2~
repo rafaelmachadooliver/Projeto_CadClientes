@@ -1,0 +1,35 @@
+unit Unit_Funcoes;
+
+interface
+
+uses
+  Messages,SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+   Winapi.Windows;
+
+ procedure Enter;
+
+type
+  Tfuncoes = class(TForm)
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  funcoes: Tfuncoes;
+
+implementation
+
+
+procedure Enter;
+begin
+ { If Key = #13 then //Se o comando for igual a enter
+     Begin
+        Key := #0;
+        Perform (wm_nextdlgctl, 0, 0); //Para pular de campo em campo
+     End;}
+end;
+
+
+end.

@@ -1,0 +1,70 @@
+unit Unit_DM;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, Datasnap.DBClient, XMLDoc, XMLIntf;
+
+type
+  TDM = class(TDataModule)
+    CadClientes: TClientDataSet;
+    CadClientesNome: TStringField;
+    CadClientesIdentidade: TStringField;
+    CadClientesCpf: TStringField;
+    CadClientesTelefone: TStringField;
+    CadClientesEmail: TStringField;
+    CadClientesCep: TStringField;
+    CadClientesLogradouro: TStringField;
+    CadClientesNumero: TIntegerField;
+    CadClientesComplemento: TStringField;
+    CadClientesBairro: TStringField;
+    CadClientesCidade: TStringField;
+    CadClientesEstado: TStringField;
+    CadClientesPais: TStringField;
+    procedure CadClientesAfterPost(DataSet: TDataSet);
+    Procedure FormatXMLFile(XmlFile:string);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DM: TDM;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+procedure TDM.CadClientesAfterPost(DataSet: TDataSet);
+begin
+   if FileExists('Registro.xml') then
+     DeleteFile('Registro.xml');
+
+   CadClientes.SaveToFile('Registro.xml',dfXML);
+
+end;
+
+Procedure FormatXMLFile(XmlFile:string);
+var
+ oXml : TXMLDocument;
+ s : utf8String;
+begin
+   oXml := TXMLDocument.Create(nil);
+   try
+    oXml.LoadFromFile(XmlFile);
+    s := oxml.XML.Text;
+    s := StringReplace(s, '>' + #13#10 + '<' , [rfReplaceAll]);
+    oxml.XML.Text := s;
+    oXml.Active := true;
+    oXml.SaveToFile(XmlFile);
+    finally
+    oXml := nil;
+    end;
+end;
+
+
+
+end.
